@@ -116,24 +116,22 @@ fn main() {
             }
 
             macro_rules! dist {
-                ($args:ident, $arg:literal, $name:literal, $func:ident, $w1:ident, $w2:ident) => (
-                    if $args.is_present("all") || $args.is_present($arg) {
-                        println!(concat!($name, " distance of {} and {}: {}"), $w1, $w2, $func($w1, $w2));
+                ($arg:literal, $name:literal, $func:ident) => (
+                    if args.is_present("all") || args.is_present($arg) {
+                        println!(concat!($name, " distance of {} and {}: {}"), w1, w2, $func(w1, w2));
                     }
                 );
             }
 
-            dist!(args, "levenshtein", "Levenshtein", levenshtein, w1, w2);
-            dist!(args, "norm_levenshtein", "Normalized Levenshtein",
-                  normalized_levenshtein, w1, w2);
-            dist!(args, "osa", "Optimal string alignment", osa_distance, w1, w2);
-            dist!(args, "damerau_levenshtein", "Damerau-Levenshtein",
-                  damerau_levenshtein, w1, w2);
-            dist!(args, "norm_damerau_levenshtein", "Normalized Damerau-Levenshtein",
-                  normalized_damerau_levenshtein, w1, w2);
-            dist!(args, "jaro", "Jaro", jaro, w1, w2);
-            dist!(args, "jaro_winkler", "Jaro-Winkler", jaro_winkler, w1, w2);
-            dist!(args, "sorensen_dice", "Sørensen-Dice", sorensen_dice, w1, w2);
+            dist!("levenshtein", "Levenshtein", levenshtein);
+            dist!("norm_levenshtein", "Normalized Levenshtein", normalized_levenshtein);
+            dist!("osa", "Optimal string alignment", osa_distance);
+            dist!("damerau_levenshtein", "Damerau-Levenshtein", damerau_levenshtein);
+            dist!("norm_damerau_levenshtein", "Normalized Damerau-Levenshtein",
+                  normalized_damerau_levenshtein);
+            dist!("jaro", "Jaro", jaro);
+            dist!("jaro_winkler", "Jaro-Winkler", jaro_winkler);
+            dist!("sorensen_dice", "Sørensen-Dice", sorensen_dice);
         }
     }
 }
