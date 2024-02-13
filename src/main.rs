@@ -87,7 +87,7 @@ fn main() {
         loop {
             let mut input = String::new();
             match stdin.read_line(&mut input) {
-                Ok(n) if n == 0 => break,
+                Ok(0) => break,
 
                 Ok(_) => {
                     if input.ends_with('\n') {
