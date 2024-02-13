@@ -1,11 +1,3 @@
-use clap::{
-    crate_authors,
-    crate_description,
-    crate_name,
-    crate_version,
-    App,
-    Arg,
-};
 use std::{
     io::{self, BufRead},
 };
@@ -23,60 +15,70 @@ use strsim::{
 };
 
 fn main() {
-    let args = App::new(crate_name!())
-        .version(crate_version!())
-        .author(crate_authors!(", "))
-        .about(crate_description!())
-        .arg(Arg::new("hamming")
+    let args = clap::Command::new(clap::crate_name!())
+        .version(clap::crate_version!())
+        .author(clap::crate_authors!(", "))
+        .about(clap::crate_description!())
+        .arg(clap::Arg::new("hamming")
              .short('h')
              .long("hamming")
-             .about("compute Hamming distance")
-        ).arg(Arg::new("levenshtein")
+             .help("compute Hamming distance")
+              .action(clap::ArgAction::SetTrue)
+        ).arg(clap::Arg::new("levenshtein")
               .short('l')
               .long("levenshtein")
-              .about("compute Levenshtein distance")
-        ).arg(Arg::new("norm_levenshtein")
+              .help("compute Levenshtein distance")
+              .action(clap::ArgAction::SetTrue)
+        ).arg(clap::Arg::new("norm_levenshtein")
               .short('L')
               .long("normalized-levenshtein")
-              .about("compute normalized Levenshtein distance")
-        ).arg(Arg::new("osa")
+              .help("compute normalized Levenshtein distance")
+              .action(clap::ArgAction::SetTrue)
+        ).arg(clap::Arg::new("osa")
               .short('o')
               .long("optimal-string-alignment")
-              .about("compute optimal string alignment")
-        ).arg(Arg::new("damerau_levenshtein")
+              .help("compute optimal string alignment")
+              .action(clap::ArgAction::SetTrue)
+        ).arg(clap::Arg::new("damerau_levenshtein")
               .short('d')
               .long("damerau-levenshtein")
-              .about("compute Damerau-Levenshtein distance")
-        ).arg(Arg::new("norm_damerau_levenshtein")
+              .help("compute Damerau-Levenshtein distance")
+              .action(clap::ArgAction::SetTrue)
+        ).arg(clap::Arg::new("norm_damerau_levenshtein")
               .short('D')
               .long("normalized-damerau-levenshtein")
-              .about("compute normalized Damerau-Levenshtein distance")
-        ).arg(Arg::new("jaro")
+              .help("compute normalized Damerau-Levenshtein distance")
+              .action(clap::ArgAction::SetTrue)
+        ).arg(clap::Arg::new("jaro")
               .short('j')
               .long("jaro")
-              .about("compute Jaro distance")
-        ).arg(Arg::new("jaro_winkler")
+              .help("compute Jaro distance")
+              .action(clap::ArgAction::SetTrue)
+        ).arg(clap::Arg::new("jaro_winkler")
               .short('w')
               .long("jaro-winkler")
-              .about("compute Jaro-Winkler distance")
-        ).arg(Arg::new("sorensen_dice")
+              .help("compute Jaro-Winkler distance")
+              .action(clap::ArgAction::SetTrue)
+        ).arg(clap::Arg::new("sorensen_dice")
               .short('s')
               .long("sorensen-dice")
-              .about("compute Sørensen-Dice distance")
-        ).arg(Arg::new("all")
+              .help("compute Sørensen-Dice distance")
+              .action(clap::ArgAction::SetTrue)
+        ).arg(clap::Arg::new("all")
               .short('a')
               .long("all")
-              .about("compute all distance metrics")
-        ).arg(Arg::new("words")
-              .multiple_values(true)
-              .multiple_occurrences(true)
+              .help("compute all distance metrics")
+              .action(clap::ArgAction::SetTrue)
+        ).arg(clap::Arg::new("words")
+              .num_args(0..)
+              .action(clap::ArgAction::Set)
               .value_name("WORD")
         ).get_matches();
 
     let stdin_words;
     let words : Vec<&str>;
-    if let Some(v) = args.values_of("words") {
-        words = v.collect();
+    if let Some(v) = args.get_many::<&str>("words") {
+        words = v.cloned().collect();
     } else {
         let stdin = io::stdin();
         let mut stdin = stdin.lock();
@@ -107,7 +109,7 @@ fn main() {
 
     for (idx, w1) in words.iter().enumerate() {
         for w2 in &words[idx + 1..] {
-            if args.is_present("all") || args.is_present("hamming") {
+            if args.get_flag("all") || args.get_flag("hamming") {
                 match hamming(w1, w2) {
                     Ok(dist) => println!("Hamming distance of {} and {}: {}", w1, w2, dist),
                     Err(StrSimError::DifferentLengthArgs)
@@ -117,7 +119,7 @@ fn main() {
 
             macro_rules! dist {
                 ($arg:literal, $name:literal, $func:ident) => (
-                    if args.is_present("all") || args.is_present($arg) {
+                    if args.get_flag("all") || args.get_flag($arg) {
                         println!(concat!($name, " distance of {} and {}: {}"), w1, w2, $func(w1, w2));
                     }
                 );
