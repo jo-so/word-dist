@@ -1,6 +1,6 @@
 [package]
 name = "word-dist"
-version = "1.0.2"
+version = "1.0.3"
 authors = ["Jörg Sommer <joerg@jo-so.de>"]
 edition = "2018"
 description = "Computes the pairwise similarity between multiple words"
